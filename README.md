@@ -1,3 +1,10 @@
+# Notes
+Gonna have to do a lot of linkng if you install this project fresh.
+But you can't link the Google Maps one, it's got to be done by hand,
+so can't just do `react-native link`.
+
+
+
 This project was bootstrapped with [Create React Native App](https://github.com/react-community/create-react-native-app).
 
 Below you'll find information about performing common tasks. The most recent version of this guide is available [here](https://github.com/react-community/create-react-native-app/blob/master/react-native-scripts/template/README.md).
