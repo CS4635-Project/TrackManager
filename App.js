@@ -29,13 +29,15 @@ class Light {
     this.lastStatus = lastStatus;
     /* Every light is listening on a socket. This is possibly not good, but fuck it. */
     this._socket = dgram.createSocket('udp4');
-    this._socket.bind(4210);
-    this._socket.on('message', (msg, rinfo) => console.log(`Received ${msg} from ${rinfo}`));
+    //this._socket.bind(4210);
+    //this._socket.on('message', (msg, rinfo) => console.log(`Received ${msg} from ${rinfo}`));
   }
 
   _sendMessage(mess) {
     console.log(`Sending ${mess} to ${this.ip}`);
-    this._socket.send(mess, 0, mess.length, 4210, this.ip, (err) => console.log(err));
+    //this._socket.send([1, 1, 1, 1, 1], 0, 4, 4210, this.ip, (err) => console.log('hi'));
+    v//ar b = new Buffer(mess);
+    this._socket.send(mess, 0, 100, 4210, this.ip, (err) => console.log(err));
   }
 
   toggleState() {
@@ -97,10 +99,12 @@ class Track {
     RNFS.readFile(opening, 'utf8')
     .then((res) => {
       console.log(`Loaded track data: ${res}`);
+      var t = Track.fromJson(JSON.parse(res));
+      console.log(`Parsed to ${track.lights}`);
       /*this.setState({
         track: Track.fromJson(JSON.parse(res))
       });*/
-      callback(Track.fromJson(JSON.parse(res)));
+      callback(t);
     }).catch((err) => {
       console.log(err.message)
     });
@@ -151,9 +155,12 @@ export default class MyApp extends React.Component {
 
   selectTrack(trackFile) {
     console.log(trackFile.name);
-    Track.fromTrackName(trackFile.name, (returned) => this.setState({
-      track: returned
-    }));
+    Track.fromTrackName(trackFile.name, (returned) => {
+      console.log(`Loaded track ${returned}`);
+      this.setState({
+        track: returned
+      });
+    });
   }
 
   handleTrackName(text) {
@@ -211,7 +218,7 @@ export default class MyApp extends React.Component {
         <Content>
           <Form>
             <Item>
-              <Input placeholder="Track Name" onChangeText={(e) => this.handleNewTrackName(e)} value={this.state.trackName}/>
+              <Input placeholder="Track Name" onChangeText={(e) => this.handleTrackName(e)} value={this.state.trackName}/>
             </Item>
           </Form>
         </Content>
@@ -419,7 +426,7 @@ class TrackComponent extends React.Component {
         /*lights: this.state.lights,*/
         lightEditing: null
       });
-      this.state.track.save();
+      this.state.track.saveTrack();
     }
     var ip = this.state.lightEditing.ip;
     var goBack = () => this.setState({lightEditing: null});
@@ -446,8 +453,8 @@ class TrackComponent extends React.Component {
             <Button onPress={goBack}>
               <Text>Cancel</Text>
             </Button>
-            <Button active onPress={() => null}>
-              <Text onPress={save}>OK</Text>
+            <Button active onPress={save}>
+              <Text>OK</Text>
             </Button>
           </FooterTab>
         </Footer>
